@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           thumbColor: Colors.white,
           activeTrackColor: Colors.white,
           inactiveTrackColor: Colors.black,
-          overlayColor: Colors.white10,
+          overlayColor: Colors.white38,
         ),
       ),
       home: MyHomePage(),
@@ -45,8 +45,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool routerSettingsOpened = false;
-  bool colorSettingsOpened = false;
   bool editing = false;
   Color color = Colors.white;
   int alpha = 255;
@@ -58,15 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Color getRgbColor(String rgb) {
     String colorStr = "0xff" + rgb;
     return Color(int.parse(colorStr));
-  }
-
-  void submitIP(String ip, BuildContext context) {
-    // TODO: implement
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Invalid ip address"),
-      ),
-    );
   }
 
   void submitCol(String rgb, BuildContext context) {
@@ -126,67 +115,74 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.all(32),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: routerSettingsOpened ? 48 : 0,
-                      ),
-                      Expanded(
-                        flex: routerSettingsOpened ? 1 : 0,
-                        child: IconButton(
-                          iconSize: routerSettingsOpened ? 48 : 24,
-                          icon: Icon(
-                            Icons.router,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              routerSettingsOpened = !routerSettingsOpened;
-                              colorSettingsOpened = false;
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        flex: !colorSettingsOpened && !routerSettingsOpened
-                            ? 1
-                            : 0,
-                        child: Container(),
-                      ),
-                      Expanded(
-                        flex: colorSettingsOpened ? 1 : 0,
-                        child: IconButton(
-                          iconSize: colorSettingsOpened ? 48 : 24,
-                          icon: Icon(
-                            Icons.palette,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              colorSettingsOpened = !colorSettingsOpened;
-                              routerSettingsOpened = false;
-                            });
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: colorSettingsOpened ? 48 : 0,
-                      ),
-                    ],
-                  ),
-                ),
-                routerSettingsOpened
-                    ? Column(
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                          ),
                           Padding(
+                            padding: const EdgeInsets.only(left: 24),
+                            child: DropdownButton<String>(
+                              underline: Container(),
+                              value: dropdownValue,
+                              onChanged: (val) {
+                                setState(() {
+                                  dropdownValue = val;
+                                  editing = false;
+                                });
+                                if (widget.presets.containsKey(dropdownValue)) {
+                                  submitCol(
+                                      widget.presets[dropdownValue], context);
+                                } else {
+                                  submitCol("FFFFFF", context);
+                                }
+                              },
+                              items: options
+                                  .map(
+                                    (k) => DropdownMenuItem(
+                                      value: k,
+                                      child: Text(k),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                          widget.presets.containsKey(dropdownValue) && !editing
+                              ? IconButton(
+                                  icon: Icon(Icons.edit_outlined),
+                                  onPressed: () =>
+                                      setState(() => editing = true),
+                                )
+                              : editing
+                                  ? IconButton(
+                                      icon: Icon(Icons.done),
+                                      onPressed: () {
+                                        setState(() => editing = false);
+                                        submitCol(
+                                            colorController.text, context);
+                                      })
+                                  : Container(
+                                      width: 48,
+                                      height: 48,
+                                    ),
+                        ],
+                      ),
+                    ),
+                    !widget.presets.containsKey(dropdownValue) || editing
+                        ? Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: TextField(
                                     textAlign: TextAlign.center,
-                                    controller: ipController,
+                                    controller: colorController,
                                     decoration: InputDecoration(
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -198,135 +194,27 @@ class _MyHomePageState extends State<MyHomePage> {
                                             color: Colors.white, width: 1),
                                         borderRadius: BorderRadius.circular(50),
                                       ),
-                                      labelText: "IPv4:",
+                                      labelText: "#",
                                     ),
                                     onSubmitted: (val) {
-                                      submitIP(val, context);
+                                      submitCol(val, context);
                                     },
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      )
-                    : Container(),
-                colorSettingsOpened
-                    ? Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                DropdownButton<String>(
-                                  underline: Container(),
-                                  value: dropdownValue,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      dropdownValue = val;
-                                      editing = false;
-                                    });
-                                    if (widget.presets
-                                        .containsKey(dropdownValue)) {
-                                      submitCol(widget.presets[dropdownValue],
-                                          context);
-                                    } else {
-                                      submitCol("FFFFFF", context);
-                                    }
-                                  },
-                                  items: options
-                                      .map(
-                                        (k) => DropdownMenuItem(
-                                          value: k,
-                                          child: Text(k),
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                                widget.presets.containsKey(dropdownValue) &&
-                                        !editing
-                                    ? IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () =>
-                                            setState(() => editing = true),
-                                      )
-                                    : editing
-                                        ? IconButton(
-                                            icon: Icon(Icons.done),
-                                            onPressed: () {
-                                              setState(() => editing = false);
-                                              submitCol(colorController.text,
-                                                  context);
-                                            })
-                                        : Container(),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: !widget.presets
-                                              .containsKey(dropdownValue) ||
-                                          editing
-                                      ? TextField(
-                                          textAlign: TextAlign.center,
-                                          controller: colorController,
-                                          decoration: InputDecoration(
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white38,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            labelText: "#",
-                                          ),
-                                          onSubmitted: (val) {
-                                            submitCol(val, context);
-                                          },
-                                        )
-                                      : TextField(
-                                          textAlign: TextAlign.center,
-                                          controller: colorController,
-                                          enabled: false,
-                                          style:
-                                              TextStyle(color: Colors.white38),
-                                          decoration: InputDecoration(
-                                            disabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white38,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            labelText: "#",
-                                          ),
-                                          onSubmitted: (val) {
-                                            submitCol(val, context);
-                                          },
-                                        ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
+                          )
+                        : Container(),
+                  ],
+                ),
                 Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Icon(Icons.nights_stay_outlined),
+                      child: Icon(
+                        Icons.nights_stay_outlined,
+                        color: Colors.white38,
+                      ),
                     ),
                     Expanded(
                       child: Slider(
@@ -339,7 +227,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Icon(Icons.wb_sunny_outlined),
+                      child: Icon(
+                        Icons.wb_sunny_outlined,
+                        color: Colors.white38,
+                      ),
                     ),
                   ],
                 )
