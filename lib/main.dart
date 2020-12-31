@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        accentColor: Colors.white,
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
         textSelectionTheme: TextSelectionThemeData(
@@ -98,85 +99,97 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: ExpansionTile(
+                tilePadding: const EdgeInsets.all(0),
+                title: Text("Connection"),
+                leading: Icon(Icons.router_outlined),
+                children: [],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: ExpansionTile(
+                tilePadding: const EdgeInsets.all(0),
                 title: Text("Color"),
+                leading: Icon(Icons.palette),
                 children: [
-                  
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DropdownButton<String>(
-                    underline: Container(),
-                    value: dropdownValue,
-                    onChanged: (val) {
-                      setState(() {
-                        dropdownValue = val;
-                        editing = false;
-                      });
-                      if (presets.containsKey(dropdownValue)) {
-                        submitCol(presets[dropdownValue], context);
-                      } else {
-                        submitCol("FFFFFF", context);
-                      }
-                    },
-                    items: options
-                        .map(
-                          (k) => DropdownMenuItem(
-                            value: k,
-                            child: Text(k),
-                          ),
-                        )
-                        .toList(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DropdownButton<String>(
+                          underline: Container(),
+                          value: dropdownValue,
+                          onChanged: (val) {
+                            setState(() {
+                              dropdownValue = val;
+                              editing = false;
+                            });
+                            if (presets.containsKey(dropdownValue)) {
+                              submitCol(presets[dropdownValue], context);
+                            } else {
+                              submitCol("FFFFFF", context);
+                            }
+                          },
+                          items: options
+                              .map(
+                                (k) => DropdownMenuItem(
+                                  value: k,
+                                  child: Text(k),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                        presets.containsKey(dropdownValue) && !editing
+                            ? IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () => setState(() => editing = true),
+                              )
+                            : editing
+                                ? IconButton(
+                                    icon: Icon(Icons.done),
+                                    onPressed: () {
+                                      setState(() => editing = false);
+                                      submitCol(controller.text, context);
+                                    })
+                                : Container(),
+                      ],
+                    ),
                   ),
-                  presets.containsKey(dropdownValue) && !editing
-                      ? IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () => setState(() => editing = true),
-                        )
-                      : editing
-                          ? IconButton(
-                              icon: Icon(Icons.done),
-                              onPressed: () {
-                                setState(() => editing = false);
-                                submitCol(controller.text, context);
-                              })
-                          : Container(),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      enabled: !presets.containsKey(dropdownValue) || editing,
-                      textAlign: TextAlign.center,
-                      controller: controller,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white30, width: 1),
-                          borderRadius: BorderRadius.circular(50),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            enabled:
+                                !presets.containsKey(dropdownValue) || editing,
+                            textAlign: TextAlign.center,
+                            controller: controller,
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white30, width: 1),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 1),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white30, width: 1),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              labelText: "#",
+                            ),
+                            onSubmitted: (val) {
+                              submitCol(val, context);
+                            },
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 1),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white30, width: 1),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        labelText: "#",
-                      ),
-                      onSubmitted: (val) {
-                        submitCol(val, context);
-                      },
+                      ],
                     ),
                   ),
                 ],
