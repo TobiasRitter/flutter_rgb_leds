@@ -34,6 +34,12 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
+  final Map<String, String> presets = {
+    "Preset1": "FF0000",
+    "Preset2": "00FF00",
+    "Preset3": "0000FF",
+  };
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -43,12 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Color color = Colors.white;
   int alpha = 255;
   String lastValidRgb = "FFFFFF";
-  Map<String, String> presets = {
-    "Preset1": "FF0000",
-    "Preset2": "00FF00",
-    "Preset3": "0000FF",
-  };
-  TextEditingController controller;
+  TextEditingController controller = TextEditingController(text: "FFFFFF");
   String dropdownValue = "Custom";
 
   Color getRgbColor(String rgb) {
@@ -75,14 +76,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    controller = TextEditingController(text: "FFFFFF");
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> options = ["Custom"] + presets.keys.toList();
+    List<String> options = ["Custom"] + widget.presets.keys.toList();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(32),
@@ -125,8 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               dropdownValue = val;
                               editing = false;
                             });
-                            if (presets.containsKey(dropdownValue)) {
-                              submitCol(presets[dropdownValue], context);
+                            if (widget.presets.containsKey(dropdownValue)) {
+                              submitCol(widget.presets[dropdownValue], context);
                             } else {
                               submitCol("FFFFFF", context);
                             }
@@ -140,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               )
                               .toList(),
                         ),
-                        presets.containsKey(dropdownValue) && !editing
+                        widget.presets.containsKey(dropdownValue) && !editing
                             ? IconButton(
                                 icon: Icon(Icons.edit),
                                 onPressed: () => setState(() => editing = true),
@@ -161,33 +162,44 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextField(
-                            enabled:
-                                !presets.containsKey(dropdownValue) || editing,
-                            textAlign: TextAlign.center,
-                            controller: controller,
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white30, width: 1),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 1),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              disabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white30, width: 1),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              labelText: "#",
-                            ),
-                            onSubmitted: (val) {
-                              submitCol(val, context);
-                            },
-                          ),
+                          child: !widget.presets.containsKey(dropdownValue) ||
+                                  editing
+                              ? TextField(
+                                  textAlign: TextAlign.center,
+                                  controller: controller,
+                                  decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.white38, width: 1),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.white, width: 1),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    labelText: "#",
+                                  ),
+                                  onSubmitted: (val) {
+                                    submitCol(val, context);
+                                  },
+                                )
+                              : TextField(
+                                  textAlign: TextAlign.center,
+                                  enabled: false,
+                                  style: TextStyle(color: Colors.white38),
+                                  decoration: InputDecoration(
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.white38, width: 1),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    labelText: "#",
+                                  ),
+                                  onSubmitted: (val) {
+                                    submitCol(val, context);
+                                  },
+                                ),
                         ),
                       ],
                     ),
