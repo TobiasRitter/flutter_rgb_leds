@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  radius: 0.75,
+                  radius: 0.5,
                   colors: [color, Colors.transparent],
                 ),
               ),
