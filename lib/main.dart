@@ -4,12 +4,17 @@ void main() {
   runApp(MyApp());
 }
 
+const TextStyle textStyle = TextStyle(
+    // fontWeight: FontWeight.w300,
+    );
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Colors.white,
@@ -24,6 +29,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: MyHomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -36,50 +42,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int alpha = 0;
-  List<int> rgb = [255, 255, 255];
-  Map<String, List<int>> presets = {
-    "Preset1": [255, 0, 0],
-    "Preset2": [255, 255, 0],
-    "Preset3": [0, 0, 255],
+  bool editing = false;
+  Color color = Colors.white;
+  int alpha = 255;
+  Map<String, String> presets = {
+    "Preset1": "FF0000",
+    "Preset2": "00FF00",
+    "Preset3": "0000FF",
   };
-  TextEditingController rController;
-  TextEditingController gController;
-  TextEditingController bController;
+  TextEditingController controller;
   String dropdownValue = "Custom";
 
-  void callback(int change, TextEditingController controller) {
-    if (int.tryParse(controller.text) != null) {
-      int val = int.parse(controller.text) + change;
-      print(val);
-      if (val >= 0 && val <= 255) {
-        setState(() => controller.text = val.toString());
-      }
-    }
+  Color getRgbColor(String rgb) {
+    String colorStr = "0xff" + rgb;
+    return Color(int.parse(colorStr));
   }
 
-  void callback2(TextEditingController controller, int index) {
-    var str = controller.text;
-    if (int.tryParse(str) != null &&
-        int.parse(str) >= 0 &&
-        int.parse(str) <= 255) {
-      rgb[index] = int.parse(str);
-    } else {
+  void submitCol(String val, BuildContext context) {
+    try {
+      var col = getRgbColor(val);
       setState(() {
-        controller.text = rgb[index].toString();
+        color = col;
       });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Invalid color code"),
+        ),
+      );
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    rController = TextEditingController(text: rgb[0].toString());
-    gController = TextEditingController(text: rgb[1].toString());
-    bController = TextEditingController(text: rgb[2].toString());
-    rController.addListener(() => callback2(rController, 0));
-    gController.addListener(() => callback2(gController, 1));
-    bController.addListener(() => callback2(bController, 2));
   }
 
   @override
@@ -95,69 +86,70 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Icon(
                 Icons.lightbulb_outline,
                 size: 128,
-                color: Color.fromARGB(
-                  255,
-                  (rgb[0] * alpha / 255).round(),
-                  (rgb[1] * alpha / 255).round(),
-                  (rgb[2] * alpha / 255).round(),
-                ),
+                color: color.withAlpha(alpha),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: DropdownButton<String>(
+                underline: Container(),
+                value: dropdownValue,
+                onChanged: (val) {
+                  setState(() {
+                    dropdownValue = val;
+                    editing = false;
+                    if (presets.containsKey(dropdownValue)) {
+                      submitCol(presets[dropdownValue], context);
+                    }
+                  });
+                },
+                items: options
+                    .map(
+                      (k) => DropdownMenuItem(
+                        value: k,
+                        child: Text(k),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 children: [
-                  DropdownButton<String>(
-                    underline: Container(),
-                    value: dropdownValue,
-                    onChanged: (val) {
-                      setState(() {
-                        dropdownValue = val;
-                        if (presets.containsKey(dropdownValue)) {
-                          rgb = presets[dropdownValue];
-                        }
-                      });
-                    },
-                    items: options
-                        .map(
-                          (k) => DropdownMenuItem(
-                            value: k,
-                            child: Text(k),
-                          ),
-                        )
-                        .toList(),
+                  Container(
+                    child: Text("#"),
+                    width: 16,
                   ),
-                  Spacer(),
-                  presets.containsKey(dropdownValue)
-                      ? IconButton(icon: Icon(Icons.edit), onPressed: null)
-                      : Container(),
+                  Expanded(
+                    child: TextField(
+                      enabled: !presets.containsKey(dropdownValue) || editing,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: "FFFFFF",
+                        border: InputBorder.none,
+                      ),
+                      style: textStyle,
+                      onSubmitted: (val) {
+                        submitCol(val, context);
+                      },
+                    ),
+                  ),
+                  presets.containsKey(dropdownValue) && !editing
+                      ? IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () => setState(() => editing = true),
+                        )
+                      : editing
+                          ? IconButton(
+                              icon: Icon(Icons.done),
+                              onPressed: () => setState(() {
+                                    editing = false;
+                                  }))
+                          : Container(),
                 ],
               ),
             ),
-            presets.containsKey(dropdownValue)
-                ? Container()
-                : Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      children: [
-                        RGBValPicker(
-                          label: "R",
-                          callback: (val) => callback(val, rController),
-                          controller: rController,
-                        ),
-                        RGBValPicker(
-                          label: "G",
-                          callback: (val) => callback(val, gController),
-                          controller: gController,
-                        ),
-                        RGBValPicker(
-                          label: "B",
-                          callback: (val) => callback(val, bController),
-                          controller: bController,
-                        ),
-                      ],
-                    ),
-                  ),
             Row(
               children: [
                 Icon(Icons.nights_stay_outlined),
@@ -176,62 +168,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class RGBValPicker extends StatelessWidget {
-  const RGBValPicker({
-    Key key,
-    @required this.label,
-    @required this.callback,
-    @required this.controller,
-  })  : assert(label != null),
-        assert(callback != null),
-        assert(controller != null),
-        super(key: key);
-
-  final String label;
-  final Function(int) callback;
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 32),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w100,
-              fontSize: 28,
-            ),
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: controller.text == "255" ? null : () => callback(1),
-        ),
-        Container(
-          width: 100,
-          child: TextField(
-            style: TextStyle(fontWeight: FontWeight.w100),
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-            ),
-            keyboardType: TextInputType.number,
-            controller: controller,
-            // onTap: () => controller.selection = TextSelection(
-            //     baseOffset: 0, extentOffset: controller.value.text.length),
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.remove),
-          onPressed: controller.text == "0" ? null : () => callback(-1),
-        ),
-      ],
     );
   }
 }
