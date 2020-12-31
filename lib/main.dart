@@ -102,11 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [color.withAlpha(alpha), const Color(0x00000000)],
-                  tileMode: TileMode.repeated,
+                gradient: RadialGradient(
+                  radius: 1,
+                  colors: [
+                    color.withAlpha((alpha / 2).floor()),
+                    Colors.transparent
+                  ],
                 ),
               ),
               child: Row(
@@ -115,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Icon(
                     Icons.lightbulb_outline,
                     size: 128,
-                    color: Colors.white,
+                    color: color.withAlpha(alpha),
                   ),
                 ],
               ),
