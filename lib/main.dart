@@ -4,10 +4,6 @@ void main() {
   runApp(MyApp());
 }
 
-const TextStyle textStyle = TextStyle(
-    // fontWeight: FontWeight.w300,
-    );
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -45,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool editing = false;
   Color color = Colors.white;
   int alpha = 255;
+  String lastValidRgb = "FFFFFF";
   Map<String, String> presets = {
     "Preset1": "FF0000",
     "Preset2": "00FF00",
@@ -58,19 +55,28 @@ class _MyHomePageState extends State<MyHomePage> {
     return Color(int.parse(colorStr));
   }
 
-  void submitCol(String val, BuildContext context) {
+  void submitCol(String rgb, BuildContext context) {
     try {
-      var col = getRgbColor(val);
+      var col = getRgbColor(rgb);
       setState(() {
         color = col;
+        controller.text = rgb;
+        lastValidRgb = rgb;
       });
     } catch (e) {
+      controller.text = lastValidRgb;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Invalid color code"),
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: "FFFFFF");
   }
 
   @override
@@ -91,49 +97,40 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: DropdownButton<String>(
-                underline: Container(),
-                value: dropdownValue,
-                onChanged: (val) {
-                  setState(() {
-                    dropdownValue = val;
-                    editing = false;
-                    if (presets.containsKey(dropdownValue)) {
-                      submitCol(presets[dropdownValue], context);
-                    }
-                  });
-                },
-                items: options
-                    .map(
-                      (k) => DropdownMenuItem(
-                        value: k,
-                        child: Text(k),
-                      ),
-                    )
-                    .toList(),
+              child: ExpansionTile(
+                title: Text("Color"),
+                children: [
+                  
+                ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: Text("#"),
-                    width: 16,
-                  ),
-                  Expanded(
-                    child: TextField(
-                      enabled: !presets.containsKey(dropdownValue) || editing,
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        hintText: "FFFFFF",
-                        border: InputBorder.none,
-                      ),
-                      style: textStyle,
-                      onSubmitted: (val) {
-                        submitCol(val, context);
-                      },
-                    ),
+                  DropdownButton<String>(
+                    underline: Container(),
+                    value: dropdownValue,
+                    onChanged: (val) {
+                      setState(() {
+                        dropdownValue = val;
+                        editing = false;
+                      });
+                      if (presets.containsKey(dropdownValue)) {
+                        submitCol(presets[dropdownValue], context);
+                      } else {
+                        submitCol("FFFFFF", context);
+                      }
+                    },
+                    items: options
+                        .map(
+                          (k) => DropdownMenuItem(
+                            value: k,
+                            child: Text(k),
+                          ),
+                        )
+                        .toList(),
                   ),
                   presets.containsKey(dropdownValue) && !editing
                       ? IconButton(
@@ -143,10 +140,45 @@ class _MyHomePageState extends State<MyHomePage> {
                       : editing
                           ? IconButton(
                               icon: Icon(Icons.done),
-                              onPressed: () => setState(() {
-                                    editing = false;
-                                  }))
+                              onPressed: () {
+                                setState(() => editing = false);
+                                submitCol(controller.text, context);
+                              })
                           : Container(),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      enabled: !presets.containsKey(dropdownValue) || editing,
+                      textAlign: TextAlign.center,
+                      controller: controller,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.white30, width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.white30, width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        labelText: "#",
+                      ),
+                      onSubmitted: (val) {
+                        submitCol(val, context);
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
