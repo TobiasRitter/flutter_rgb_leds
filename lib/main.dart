@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Colors.white,
-          selectionColor: Colors.white10,
+          selectionColor: Colors.white38,
           selectionHandleColor: Colors.white,
         ),
         sliderTheme: SliderThemeData(
@@ -103,9 +103,9 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  radius: 1,
+                  radius: 0.75,
                   colors: [
-                    color.withAlpha((alpha / 2).floor()),
+                    color.withAlpha((alpha * 0.75).round()),
                     Colors.transparent
                   ],
                 ),
@@ -116,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Icon(
                     Icons.lightbulb_outline,
                     size: 128,
-                    color: color.withAlpha(alpha),
+                    color: Colors.white,
                   ),
                 ],
               ),
@@ -129,36 +129,50 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.router,
-                          color: routerSettingsOpened
-                              ? Colors.white
-                              : Colors.white38,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            routerSettingsOpened = !routerSettingsOpened;
-                            colorSettingsOpened = false;
-                          });
-                        },
+                      Container(
+                        width: routerSettingsOpened ? 48 : 0,
                       ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.palette,
-                          color: colorSettingsOpened
-                              ? Colors.white
-                              : Colors.white38,
+                      Expanded(
+                        flex: routerSettingsOpened ? 1 : 0,
+                        child: IconButton(
+                          iconSize: routerSettingsOpened ? 48 : 24,
+                          icon: Icon(
+                            Icons.router,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              routerSettingsOpened = !routerSettingsOpened;
+                              colorSettingsOpened = false;
+                            });
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            colorSettingsOpened = !colorSettingsOpened;
-                            routerSettingsOpened = false;
-                          });
-                        },
-                      )
+                      ),
+                      Expanded(
+                        flex: !colorSettingsOpened && !routerSettingsOpened
+                            ? 1
+                            : 0,
+                        child: Container(),
+                      ),
+                      Expanded(
+                        flex: colorSettingsOpened ? 1 : 0,
+                        child: IconButton(
+                          iconSize: colorSettingsOpened ? 48 : 24,
+                          icon: Icon(
+                            Icons.palette,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              colorSettingsOpened = !colorSettingsOpened;
+                              routerSettingsOpened = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: colorSettingsOpened ? 48 : 0,
+                      ),
                     ],
                   ),
                 ),
