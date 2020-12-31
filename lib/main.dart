@@ -283,6 +283,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         )
                                       : TextField(
                                           textAlign: TextAlign.center,
+                                          controller: colorController,
                                           enabled: false,
                                           style:
                                               TextStyle(color: Colors.white38),
