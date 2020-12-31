@@ -97,215 +97,240 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     List<String> options = ["Custom"] + widget.presets.keys.toList();
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Icon(
-                Icons.lightbulb_outline,
-                size: 128,
-                color: color.withAlpha(alpha),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [color.withAlpha(alpha), const Color(0x00000000)],
+                  tileMode: TileMode.repeated,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.router,
-                      color:
-                          routerSettingsOpened ? Colors.white : Colors.white38,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        routerSettingsOpened = !routerSettingsOpened;
-                        colorSettingsOpened = false;
-                      });
-                    },
+                  Icon(
+                    Icons.lightbulb_outline,
+                    size: 128,
+                    color: Colors.white,
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.palette,
-                      color:
-                          colorSettingsOpened ? Colors.white : Colors.white38,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        colorSettingsOpened = !colorSettingsOpened;
-                        routerSettingsOpened = false;
-                      });
-                    },
-                  )
                 ],
               ),
             ),
-            routerSettingsOpened
-                ? Column(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                textAlign: TextAlign.center,
-                                controller: ipController,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white38, width: 1),
-                                    borderRadius: BorderRadius.circular(50),
+                      IconButton(
+                        icon: Icon(
+                          Icons.router,
+                          color: routerSettingsOpened
+                              ? Colors.white
+                              : Colors.white38,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            routerSettingsOpened = !routerSettingsOpened;
+                            colorSettingsOpened = false;
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.palette,
+                          color: colorSettingsOpened
+                              ? Colors.white
+                              : Colors.white38,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            colorSettingsOpened = !colorSettingsOpened;
+                            routerSettingsOpened = false;
+                          });
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                routerSettingsOpened
+                    ? Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    textAlign: TextAlign.center,
+                                    controller: ipController,
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.white38, width: 1),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.white, width: 1),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      labelText: "IPv4:",
+                                    ),
+                                    onSubmitted: (val) {
+                                      submitIP(val, context);
+                                    },
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 1),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  labelText: "IPv4:",
                                 ),
-                                onSubmitted: (val) {
-                                  submitIP(val, context);
-                                },
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(),
-            colorSettingsOpened
-                ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            DropdownButton<String>(
-                              underline: Container(),
-                              value: dropdownValue,
-                              onChanged: (val) {
-                                setState(() {
-                                  dropdownValue = val;
-                                  editing = false;
-                                });
-                                if (widget.presets.containsKey(dropdownValue)) {
-                                  submitCol(
-                                      widget.presets[dropdownValue], context);
-                                } else {
-                                  submitCol("FFFFFF", context);
-                                }
-                              },
-                              items: options
-                                  .map(
-                                    (k) => DropdownMenuItem(
-                                      value: k,
-                                      child: Text(k),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                            widget.presets.containsKey(dropdownValue) &&
-                                    !editing
-                                ? IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () =>
-                                        setState(() => editing = true),
-                                  )
-                                : editing
+                          ),
+                        ],
+                      )
+                    : Container(),
+                colorSettingsOpened
+                    ? Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                DropdownButton<String>(
+                                  underline: Container(),
+                                  value: dropdownValue,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      dropdownValue = val;
+                                      editing = false;
+                                    });
+                                    if (widget.presets
+                                        .containsKey(dropdownValue)) {
+                                      submitCol(widget.presets[dropdownValue],
+                                          context);
+                                    } else {
+                                      submitCol("FFFFFF", context);
+                                    }
+                                  },
+                                  items: options
+                                      .map(
+                                        (k) => DropdownMenuItem(
+                                          value: k,
+                                          child: Text(k),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                                widget.presets.containsKey(dropdownValue) &&
+                                        !editing
                                     ? IconButton(
-                                        icon: Icon(Icons.done),
-                                        onPressed: () {
-                                          setState(() => editing = false);
-                                          submitCol(
-                                              colorController.text, context);
-                                        })
-                                    : Container(),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: !widget.presets
-                                          .containsKey(dropdownValue) ||
-                                      editing
-                                  ? TextField(
-                                      textAlign: TextAlign.center,
-                                      controller: colorController,
-                                      decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.white38, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.white, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
-                                        labelText: "#",
-                                      ),
-                                      onSubmitted: (val) {
-                                        submitCol(val, context);
-                                      },
-                                    )
-                                  : TextField(
-                                      textAlign: TextAlign.center,
-                                      enabled: false,
-                                      style: TextStyle(color: Colors.white38),
-                                      decoration: InputDecoration(
-                                        disabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.white38, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
-                                        labelText: "#",
-                                      ),
-                                      onSubmitted: (val) {
-                                        submitCol(val, context);
-                                      },
-                                    ),
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () =>
+                                            setState(() => editing = true),
+                                      )
+                                    : editing
+                                        ? IconButton(
+                                            icon: Icon(Icons.done),
+                                            onPressed: () {
+                                              setState(() => editing = false);
+                                              submitCol(colorController.text,
+                                                  context);
+                                            })
+                                        : Container(),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Icon(Icons.nights_stay_outlined),
-                ),
-                Expanded(
-                  child: Slider(
-                      value: alpha / 255,
-                      onChanged: (val) {
-                        setState(() {
-                          alpha = (val * 255).round();
-                        });
-                      }),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Icon(Icons.wb_sunny_outlined),
-                ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: !widget.presets
+                                              .containsKey(dropdownValue) ||
+                                          editing
+                                      ? TextField(
+                                          textAlign: TextAlign.center,
+                                          controller: colorController,
+                                          decoration: InputDecoration(
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white38,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            labelText: "#",
+                                          ),
+                                          onSubmitted: (val) {
+                                            submitCol(val, context);
+                                          },
+                                        )
+                                      : TextField(
+                                          textAlign: TextAlign.center,
+                                          enabled: false,
+                                          style:
+                                              TextStyle(color: Colors.white38),
+                                          decoration: InputDecoration(
+                                            disabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white38,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            labelText: "#",
+                                          ),
+                                          onSubmitted: (val) {
+                                            submitCol(val, context);
+                                          },
+                                        ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Icon(Icons.nights_stay_outlined),
+                    ),
+                    Expanded(
+                      child: Slider(
+                          value: alpha / 255,
+                          onChanged: (val) {
+                            setState(() {
+                              alpha = (val * 255).round();
+                            });
+                          }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Icon(Icons.wb_sunny_outlined),
+                    ),
+                  ],
+                )
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
