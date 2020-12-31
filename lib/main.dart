@@ -122,71 +122,66 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(48),
             child: Column(
               children: <Widget>[
                 Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 24),
-                            child: DropdownButton<String>(
-                              underline: Container(),
-                              value: dropdownValue,
-                              onChanged: (val) {
-                                setState(() {
-                                  dropdownValue = val;
-                                  editing = false;
-                                });
-                                if (widget.presets.containsKey(dropdownValue)) {
-                                  submitCol(
-                                      widget.presets[dropdownValue], context);
-                                } else {
-                                  submitCol("FFFFFF", context);
-                                }
-                              },
-                              items: options
-                                  .map(
-                                    (k) => DropdownMenuItem(
-                                      value: k,
-                                      child: Text(k),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          ),
-                          widget.presets.containsKey(dropdownValue) && !editing
-                              ? IconButton(
-                                  icon: Icon(Icons.edit_outlined),
-                                  onPressed: () =>
-                                      setState(() => editing = true),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 24),
+                          child: DropdownButton<String>(
+                            underline: Container(),
+                            value: dropdownValue,
+                            onChanged: (val) {
+                              setState(() {
+                                dropdownValue = val;
+                                editing = false;
+                              });
+                              if (widget.presets.containsKey(dropdownValue)) {
+                                submitCol(
+                                    widget.presets[dropdownValue], context);
+                              } else {
+                                submitCol("FFFFFF", context);
+                              }
+                            },
+                            items: options
+                                .map(
+                                  (k) => DropdownMenuItem(
+                                    value: k,
+                                    child: Text(k),
+                                  ),
                                 )
-                              : editing
-                                  ? IconButton(
-                                      icon: Icon(Icons.done),
-                                      onPressed: () {
-                                        setState(() => editing = false);
-                                        submitCol(
-                                            colorController.text, context);
-                                      })
-                                  : Container(
-                                      width: 48,
-                                      height: 48,
-                                    ),
-                        ],
-                      ),
+                                .toList(),
+                          ),
+                        ),
+                        widget.presets.containsKey(dropdownValue) && !editing
+                            ? IconButton(
+                                icon: Icon(Icons.edit_outlined),
+                                onPressed: () => setState(() => editing = true),
+                              )
+                            : editing
+                                ? IconButton(
+                                    icon: Icon(Icons.done),
+                                    onPressed: () {
+                                      setState(() => editing = false);
+                                      submitCol(colorController.text, context);
+                                    })
+                                : Container(
+                                    width: 48,
+                                    height: 48,
+                                  ),
+                      ],
                     ),
                     !widget.presets.containsKey(dropdownValue) || editing
                         ? Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.only(top: 16),
                             child: Row(
                               children: [
                                 Expanded(
@@ -217,34 +212,37 @@ class _MyHomePageState extends State<MyHomePage> {
                         : Container(),
                   ],
                 ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Icon(
-                        Icons.nights_stay_outlined,
-                        color: Colors.white38,
+                Padding(
+                  padding: const EdgeInsets.only(top: 32),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.nights_stay_outlined,
+                          color: Colors.white38,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                          value: alpha / 255,
-                          onChanged: (val) {
-                            setState(() {
-                              alpha = (val * 255).round();
-                              color = color.withAlpha(alpha);
-                            });
-                            broadcastCol(color);
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Icon(
-                        Icons.wb_sunny_outlined,
-                        color: Colors.white38,
+                      Expanded(
+                        child: Slider(
+                            value: alpha / 255,
+                            onChanged: (val) {
+                              setState(() {
+                                alpha = (val * 255).round();
+                                color = color.withAlpha(alpha);
+                              });
+                              broadcastCol(color);
+                            }),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.wb_sunny_outlined,
+                          color: Colors.white38,
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
