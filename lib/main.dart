@@ -46,11 +46,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool editing = false;
-  Color color = Colors.white;
+  Color color;
   int alpha = 255;
-  String lastValidRgb = "FFFFFF";
-  TextEditingController colorController = TextEditingController(text: "FFFFFF");
-  TextEditingController ipController = TextEditingController(text: "0.0.0.0");
+  String lastValidRgb;
+  TextEditingController colorController;
   String dropdownValue = "Custom";
 
   Color getRgbColor(String rgb) {
@@ -58,14 +57,21 @@ class _MyHomePageState extends State<MyHomePage> {
     return Color(int.parse(colorStr));
   }
 
+  void broadcastCol(Color color) {
+    // TODO: implement
+    List<int> rgb = [color.alpha, color.red, color.green, color.blue];
+    print("broadcast: $rgb");
+  }
+
   void submitCol(String rgb, BuildContext context) {
     try {
-      var col = getRgbColor(rgb);
+      var col = getRgbColor(rgb).withAlpha(alpha);
       setState(() {
         color = col;
         colorController.text = rgb;
         lastValidRgb = rgb;
       });
+      broadcastCol(color);
     } catch (e) {
       colorController.text = lastValidRgb;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -74,6 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    colorController = TextEditingController();
+    submitCol("FFFFFF", context);
   }
 
   @override
@@ -93,10 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   radius: 0.75,
-                  colors: [
-                    color.withAlpha((alpha * 0.75).round()),
-                    Colors.transparent
-                  ],
+                  colors: [color, Colors.transparent],
                 ),
               ),
               child: Row(
@@ -222,7 +232,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           onChanged: (val) {
                             setState(() {
                               alpha = (val * 255).round();
+                              color = color.withAlpha(alpha);
                             });
+                            broadcastCol(color);
                           }),
                     ),
                     Padding(
