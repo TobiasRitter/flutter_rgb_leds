@@ -10,8 +10,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'RGB Light Control',
       theme: ThemeData(
+        fontFamily: 'Raleway',
         accentColor: Colors.white,
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
@@ -160,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 .map(
                                   (k) => DropdownMenuItem(
                                     value: k,
-                                    child: Text(k),
+                                    child: Center(child: Text(k)),
                                   ),
                                 )
                                 .toList(),
