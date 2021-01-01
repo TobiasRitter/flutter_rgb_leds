@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_validator/string_validator.dart';
+import 'package:wifi_info_flutter/wifi_info_flutter.dart';
+
+const PORT = 15555;
 
 void main() {
   runApp(MyApp());
@@ -58,14 +63,39 @@ class _MyHomePageState extends State<MyHomePage> {
     return Color(int.parse(colorStr));
   }
 
-  void broadcastCol(Color color) {
-    // TODO: implement
-    List<int> rgb = [color.alpha, color.red, color.green, color.blue];
-    print("broadcast: $rgb");
+  void broadcastCol(Color color, BuildContext context) async {
+    try {
+      var rgb = [color.alpha, color.red, color.green, color.blue];
+      var rgbJson = jsonEncode(rgb);
+      var wifiIP = await WifiInfo().getWifiIP();
+      if (wifiIP == null) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text("No WiFi connection"),
+          ),
+        );
+        return;
+      }
+      var ipSegments = wifiIP.split(".");
+      var destinationStr =
+          "${ipSegments[0]}.${ipSegments[1]}.${ipSegments[2]}.255";
+      var destinationAddress = InternetAddress(destinationStr);
+
+      RawDatagramSocket.bind(InternetAddress.anyIPv4, PORT)
+          .then((RawDatagramSocket udpSocket) {
+        udpSocket.broadcastEnabled = true;
+        List<int> data = utf8.encode(rgbJson);
+        udpSocket.send(data, destinationAddress, PORT);
+      });
+      print("broadcast: $rgb");
+    } catch (e) {
+      print(e);
+    }
   }
 
   void submitCol(String rgb, BuildContext context) async {
     try {
+      rgb = rgb.toUpperCase();
       assert(rgb.length == 6);
       assert(matches(rgb, "[0-9A-F]+"));
       var col = getRgbColor(rgb).withAlpha(alpha);
@@ -86,10 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
           "Preset 3": value.getString("Preset 3") ?? "0000FF",
         },
       );
-      broadcastCol(color);
+      broadcastCol(color, context);
     } catch (e) {
       colorController.text = lastValidRgb;
-      ScaffoldMessenger.of(context).showSnackBar(
+      Scaffold.of(context).showSnackBar(
         SnackBar(
           content: Text("Invalid color code"),
         ),
@@ -202,9 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               icon: Icon(Icons.done),
                                               onPressed: () {
                                                 setState(() => editing = false);
-                                                submitCol(
-                                                    colorController.text
-                                                        .toUpperCase(),
+                                                submitCol(colorController.text,
                                                     context);
                                               })
                                           : Container(
@@ -242,8 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 labelText: "#",
                                               ),
                                               onSubmitted: (val) {
-                                                submitCol(
-                                                    val.toUpperCase(), context);
+                                                submitCol(val, context);
                                               },
                                             ),
                                           ),
@@ -272,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           alpha = (val * 255).round();
                                           color = color.withAlpha(alpha);
                                         });
-                                        broadcastCol(color);
+                                        broadcastCol(color, context);
                                       }),
                                 ),
                                 Padding(
