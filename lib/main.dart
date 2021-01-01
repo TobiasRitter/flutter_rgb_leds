@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:string_validator/string_validator.dart';
 
 void main() {
   runApp(MyApp());
@@ -65,6 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void submitCol(String rgb, BuildContext context) async {
     try {
+      assert(rgb.length == 6);
+      assert(matches(rgb, "[0-9A-F]+"));
       var col = getRgbColor(rgb).withAlpha(alpha);
       setState(() {
         color = col;
@@ -199,7 +202,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                               icon: Icon(Icons.done),
                                               onPressed: () {
                                                 setState(() => editing = false);
-                                                submitCol(colorController.text,
+                                                submitCol(
+                                                    colorController.text
+                                                        .toUpperCase(),
                                                     context);
                                               })
                                           : Container(
@@ -237,7 +242,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 labelText: "#",
                                               ),
                                               onSubmitted: (val) {
-                                                submitCol(val, context);
+                                                submitCol(
+                                                    val.toUpperCase(), context);
                                               },
                                             ),
                                           ),
