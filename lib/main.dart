@@ -76,6 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
         _prefs.setString(dropdownValue, lastValidRgb);
         print("Setting $dropdownValue to $lastValidRgb");
       }
+      presets = prefs.then(
+        (value) => {
+          "Preset 1": value.getString("Preset 1") ?? "FF0000",
+          "Preset 2": value.getString("Preset 2") ?? "00FF00",
+          "Preset 3": value.getString("Preset 3") ?? "0000FF",
+        },
+      );
       broadcastCol(color);
     } catch (e) {
       colorController.text = lastValidRgb;
@@ -91,13 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     submitCol("FFFFFF", context);
-    presets = prefs.then(
-      (value) => {
-        "Preset 1": value.getString("Preset 1") ?? "FF0000",
-        "Preset 2": value.getString("Preset 2") ?? "00FF00",
-        "Preset 3": value.getString("Preset 3") ?? "0000FF",
-      },
-    );
   }
 
   @override
@@ -169,14 +169,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                         });
                                         if (dropdownValue != "Custom") {
                                           submitCol(
-                                              presetsSnapshot.data[dropdownValue],
+                                              presetsSnapshot
+                                                  .data[dropdownValue],
                                               context);
                                         } else {
                                           submitCol("FFFFFF", context);
                                         }
                                       },
                                       items: (["Custom"] +
-                                              presetsSnapshot.data.keys.toList())
+                                              presetsSnapshot.data.keys
+                                                  .toList())
                                           .map(
                                             (k) => DropdownMenuItem(
                                               value: k,
@@ -219,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 enabledBorder:
                                                     OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Colors.white38,
+                                                      color: Colors.white60,
                                                       width: 1),
                                                   borderRadius:
                                                       BorderRadius.circular(50),
@@ -228,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       color: Colors.white,
-                                                      width: 1),
+                                                      width: 2),
                                                   borderRadius:
                                                       BorderRadius.circular(50),
                                                 ),
@@ -253,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   padding: const EdgeInsets.all(12),
                                   child: Icon(
                                     Icons.nights_stay_outlined,
-                                    color: Colors.white38,
+                                    color: Colors.white60,
                                   ),
                                 ),
                                 Expanded(
@@ -271,7 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   padding: const EdgeInsets.all(12),
                                   child: Icon(
                                     Icons.wb_sunny_outlined,
-                                    color: Colors.white38,
+                                    color: Colors.white60,
                                   ),
                                 ),
                               ],
