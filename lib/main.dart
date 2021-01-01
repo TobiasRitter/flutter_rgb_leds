@@ -235,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       color: Colors.white,
-                                                      width: 2),
+                                                      width: 1),
                                                   borderRadius:
                                                       BorderRadius.circular(50),
                                                 ),
