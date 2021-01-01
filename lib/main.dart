@@ -136,198 +136,204 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: FutureBuilder<Map<String, String>>(
-          future: presets,
-          builder: (context, presetsSnapshot) {
-            switch (presetsSnapshot.connectionState) {
-              case ConnectionState.waiting:
-                return const CircularProgressIndicator();
-              default:
-                return Column(
-                  children: [
-                    wifiIP == null
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 48),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.wifi_off_outlined),
-                                Container(
-                                  width: 16,
-                                ),
-                                Text("No WiFi connection")
+      body: SafeArea(
+        child: Center(
+          child: FutureBuilder<Map<String, String>>(
+            future: presets,
+            builder: (context, presetsSnapshot) {
+              switch (presetsSnapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return const CircularProgressIndicator();
+                default:
+                  return Column(
+                    children: [
+                      wifiIP == null
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 48),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.wifi_off_outlined),
+                                  Container(
+                                    width: 16,
+                                  ),
+                                  Text("No WiFi connection")
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              radius: 0.5,
+                              colors: [
+                                color.withAlpha(
+                                    (sqrt(alpha / 255) * 255 * 0.7).round()),
+                                Colors.transparent
                               ],
                             ),
-                          )
-                        : Container(),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            radius: 0.5,
-                            colors: [
-                              color.withAlpha(
-                                  (sqrt(alpha / 255) * 255 * 0.7).round()),
-                              Colors.transparent
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.lightbulb_outline,
+                                size: 128,
+                                color: color.withAlpha(255),
+                              ),
                             ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.lightbulb_outline,
-                              size: 128,
-                              color: color.withAlpha(255),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(48),
+                        child: Column(
+                          children: <Widget>[
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      width: 48,
+                                      height: 48,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 24),
+                                      child: DropdownButton<String>(
+                                        underline: Container(),
+                                        value: dropdownValue,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            dropdownValue = val;
+                                            editing = false;
+                                          });
+                                          if (dropdownValue != "Custom") {
+                                            submitCol(
+                                                presetsSnapshot
+                                                    .data[dropdownValue],
+                                                context);
+                                          } else {
+                                            submitCol("FFFFFF", context);
+                                          }
+                                        },
+                                        items: (["Custom"] +
+                                                presetsSnapshot.data.keys
+                                                    .toList())
+                                            .map(
+                                              (k) => DropdownMenuItem(
+                                                value: k,
+                                                child: Center(child: Text(k)),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                    dropdownValue != "Custom" && !editing
+                                        ? IconButton(
+                                            icon: Icon(Icons.edit_outlined),
+                                            onPressed: () =>
+                                                setState(() => editing = true),
+                                          )
+                                        : editing
+                                            ? IconButton(
+                                                icon: Icon(Icons.done),
+                                                onPressed: () {
+                                                  setState(
+                                                      () => editing = false);
+                                                  submitCol(
+                                                      colorController.text,
+                                                      context);
+                                                })
+                                            : Container(
+                                                width: 48,
+                                                height: 48,
+                                              ),
+                                  ],
+                                ),
+                                dropdownValue == "Custom" || editing
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 16),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                textAlign: TextAlign.center,
+                                                controller: colorController,
+                                                decoration: InputDecoration(
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white60,
+                                                        width: 1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white,
+                                                        width: 1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  labelText: "#",
+                                                ),
+                                                onSubmitted: (val) {
+                                                  submitCol(val, context);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 32),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Icon(
+                                      Icons.nights_stay_outlined,
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Slider(
+                                        value: alpha / 255,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            alpha = (val * 255).round();
+                                            color = color.withAlpha(alpha);
+                                          });
+                                          broadcastCol(color, context);
+                                        }),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Icon(
+                                      Icons.wb_sunny_outlined,
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(48),
-                      child: Column(
-                        children: <Widget>[
-                          Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 24),
-                                    child: DropdownButton<String>(
-                                      underline: Container(),
-                                      value: dropdownValue,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          dropdownValue = val;
-                                          editing = false;
-                                        });
-                                        if (dropdownValue != "Custom") {
-                                          submitCol(
-                                              presetsSnapshot
-                                                  .data[dropdownValue],
-                                              context);
-                                        } else {
-                                          submitCol("FFFFFF", context);
-                                        }
-                                      },
-                                      items: (["Custom"] +
-                                              presetsSnapshot.data.keys
-                                                  .toList())
-                                          .map(
-                                            (k) => DropdownMenuItem(
-                                              value: k,
-                                              child: Center(child: Text(k)),
-                                            ),
-                                          )
-                                          .toList(),
-                                    ),
-                                  ),
-                                  dropdownValue != "Custom" && !editing
-                                      ? IconButton(
-                                          icon: Icon(Icons.edit_outlined),
-                                          onPressed: () =>
-                                              setState(() => editing = true),
-                                        )
-                                      : editing
-                                          ? IconButton(
-                                              icon: Icon(Icons.done),
-                                              onPressed: () {
-                                                setState(() => editing = false);
-                                                submitCol(colorController.text,
-                                                    context);
-                                              })
-                                          : Container(
-                                              width: 48,
-                                              height: 48,
-                                            ),
-                                ],
-                              ),
-                              dropdownValue == "Custom" || editing
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 16),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: TextField(
-                                              textAlign: TextAlign.center,
-                                              controller: colorController,
-                                              decoration: InputDecoration(
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.white60,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                labelText: "#",
-                                              ),
-                                              onSubmitted: (val) {
-                                                submitCol(val, context);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 32),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Icon(
-                                    Icons.nights_stay_outlined,
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Slider(
-                                      value: alpha / 255,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          alpha = (val * 255).round();
-                                          color = color.withAlpha(alpha);
-                                        });
-                                        broadcastCol(color, context);
-                                      }),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Icon(
-                                    Icons.wb_sunny_outlined,
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-            }
-          },
+                    ],
+                  );
+              }
+            },
+          ),
         ),
       ),
     );
