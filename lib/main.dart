@@ -23,11 +23,9 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.white,
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Colors.white,
-          selectionColor: Colors.white38,
-          selectionHandleColor: Colors.white,
-        ),
+        cursorColor: Colors.white,
+        textSelectionColor: Colors.white38,
+        textSelectionHandleColor: Colors.white,
         sliderTheme: SliderThemeData(
           thumbColor: Colors.white,
           activeTrackColor: Colors.white,
@@ -80,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
         udpSocket.broadcastEnabled = true;
         List<int> data = utf8.encode(rgbJson);
         udpSocket.send(data, destinationAddress, PORT);
+        udpSocket.close();
       });
       print("broadcast: $rgb");
     } catch (e) {
