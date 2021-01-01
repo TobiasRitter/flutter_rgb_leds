@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -35,9 +37,9 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
   final Map<String, String> presets = {
-    "Preset1": "FF0000",
-    "Preset2": "00FF00",
-    "Preset3": "0000FF",
+    "Preset 1": "FF0000",
+    "Preset 2": "00FF00",
+    "Preset 3": "0000FF",
   };
 
   @override
@@ -106,7 +108,10 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   radius: 0.5,
-                  colors: [color, Colors.transparent],
+                  colors: [
+                    color.withAlpha((sqrt(alpha / 255) * 255 * 0.7).round()),
+                    Colors.transparent
+                  ],
                 ),
               ),
               child: Row(
@@ -115,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Icon(
                     Icons.lightbulb_outline,
                     size: 128,
-                    color: Colors.white,
+                    color: color.withAlpha(255),
                   ),
                 ],
               ),
