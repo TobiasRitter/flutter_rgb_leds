@@ -57,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String lastValidRgb;
   TextEditingController colorController = TextEditingController();
   String dropdownValue = "Custom";
+  String wifiIP;
 
   Color getRgbColor(String rgb) {
     String colorStr = "0xff" + rgb;
@@ -67,15 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       var rgb = [color.alpha, color.red, color.green, color.blue];
       var rgbJson = jsonEncode(rgb);
-      var wifiIP = await WifiInfo().getWifiIP();
-      if (wifiIP == null) {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("No WiFi connection"),
-          ),
-        );
-        return;
-      }
+      wifiIP = await WifiInfo().getWifiIP();
+      assert(wifiIP != null);
       var ipSegments = wifiIP.split(".");
       var destinationStr =
           "${ipSegments[0]}.${ipSegments[1]}.${ipSegments[2]}.255";
@@ -152,6 +146,21 @@ class _MyHomePageState extends State<MyHomePage> {
               default:
                 return Column(
                   children: [
+                    wifiIP == null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 48),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.wifi_off_outlined),
+                                Container(
+                                  width: 16,
+                                ),
+                                Text("No WiFi connection")
+                              ],
+                            ),
+                          )
+                        : Container(),
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
