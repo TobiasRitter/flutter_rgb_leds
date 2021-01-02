@@ -181,7 +181,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             : Container(),
                         LightBulb(color: color),
                         Padding(
-                          padding: const EdgeInsets.all(48),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 48, vertical: 64),
                           child: Column(
                             children: <Widget>[
                               Column(
