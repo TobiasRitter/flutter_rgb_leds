@@ -188,16 +188,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                     editing: editing,
                                     colorController: colorController,
                                     presetsSnapshot: presetsSnapshot,
-                                    onEdit: () =>
-                                        setState(() => editing = true),
+                                    onEdit: () => setState(() {
+                                      editing = true;
+                                      cHeight = 100;
+                                    }),
                                     onSave: () {
-                                      setState(() => editing = false);
+                                      setState(() {
+                                        editing = false;
+                                        cHeight = 0;
+                                      });
                                       submitCol(colorController.text, context);
                                     },
                                     onChanged: (val) {
                                       setState(() {
                                         dropdownValue = val;
                                         editing = dropdownValue == "Custom";
+                                        cHeight =
+                                            dropdownValue == "Custom" ? 100 : 0;
                                       });
                                       submitCol(
                                           dropdownValue != "Custom"
