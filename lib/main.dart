@@ -223,7 +223,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   ),
                                   AnimatedSwitcher(
-                                    duration: Duration(milliseconds: 500),
+                                    duration: Duration(milliseconds: 200),
+                                    transitionBuilder: (child, animation) =>
+                                        SizeTransition(
+                                      sizeFactor: animation,
+                                      child: child,
+                                      axisAlignment: -1,
+                                    ),
                                     child: displayedHexField,
                                   ),
                                 ],
@@ -241,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     broadcastCol(color, context);
                                   },
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
