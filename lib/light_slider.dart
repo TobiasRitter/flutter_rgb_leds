@@ -14,32 +14,29 @@ class LightSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 32),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Icon(
-              Icons.nights_stay_outlined,
-              color: Colors.white60,
-            ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Icon(
+            Icons.nights_stay_outlined,
+            color: Colors.white60,
           ),
-          Expanded(
-            child: Slider(
-              value: alpha / 255,
-              onChanged: onChanged,
-            ),
+        ),
+        Expanded(
+          child: Slider(
+            value: alpha / 255,
+            onChanged: onChanged,
           ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Icon(
-              Icons.wb_sunny_outlined,
-              color: Colors.white60,
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Icon(
+            Icons.wb_sunny_outlined,
+            color: Colors.white60,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

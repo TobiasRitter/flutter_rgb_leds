@@ -7,18 +7,15 @@ class WifiWarning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 48),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.wifi_off_outlined),
-          Container(
-            width: 16,
-          ),
-          Text("No WiFi connection")
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.wifi_off_outlined),
+        Container(
+          width: 16,
+        ),
+        Text("No WiFi connection")
+      ],
     );
   }
 }

@@ -163,7 +163,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SafeArea(
                     child: Column(
                       children: [
-                        wifiIP == null ? WifiWarning() : Container(),
+                        wifiIP == null
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 48),
+                                child: WifiWarning(),
+                              )
+                            : Container(),
                         LightBulb(color: color),
                         Padding(
                           padding: const EdgeInsets.all(48),
@@ -197,23 +202,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   ),
                                   dropdownValue == "Custom" || editing
-                                      ? HexField(
-                                          colorController: colorController,
-                                          onSubmitted: submitCol,
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 16),
+                                          child: HexField(
+                                            colorController: colorController,
+                                            onSubmitted: submitCol,
+                                          ),
                                         )
                                       : Container(),
                                 ],
                               ),
-                              LightSlider(
-                                alpha: alpha,
-                                color: color,
-                                onChanged: (val) {
-                                  setState(() {
-                                    alpha = (val * 255).round();
-                                    color = color.withAlpha(alpha);
-                                  });
-                                  broadcastCol(color, context);
-                                },
+                              Padding(
+                                padding: const EdgeInsets.only(top: 32),
+                                child: LightSlider(
+                                  alpha: alpha,
+                                  color: color,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      alpha = (val * 255).round();
+                                      color = color.withAlpha(alpha);
+                                    });
+                                    broadcastCol(color, context);
+                                  },
+                                ),
                               )
                             ],
                           ),
