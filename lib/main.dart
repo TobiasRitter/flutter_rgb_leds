@@ -99,10 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
       assert(matches(rgb, "[0-9A-F]+"));
       var col = getRgbColor(rgb).withAlpha(alpha);
       colorController.text = rgb;
-      setState(() {
-        color = col;
-        lastValidRgb = rgb;
-      });
       if (!editing) {
         prefs.then((SharedPreferences _prefs) {
           _prefs.setString(dropdownValue, rgb);
@@ -116,7 +112,11 @@ class _MyHomePageState extends State<MyHomePage> {
           "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
         },
       );
-      broadcastCol(color, context);
+      broadcastCol(col, context);
+      setState(() {
+        color = col;
+        lastValidRgb = rgb;
+      });
     } catch (e) {
       colorController.text = lastValidRgb;
       Scaffold.of(context).showSnackBar(
