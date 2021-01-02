@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -64,8 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
   HexField hexField;
   Container noHexField = Container();
   Widget displayedHexField;
+  Timer timer;
 
-  void broadcastCol(Color color, BuildContext context) async {
+  void broadcastCol(Color color) async {
     try {
       var rgb = [color.alpha, color.red, color.green, color.blue];
       var rgbJson = jsonEncode(rgb);
@@ -112,7 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Setting $dropdownValue to $rgb");
         });
       }
-      broadcastCol(col, context);
     } catch (e) {
       colorController.text = lastValidRgb;
       Scaffold.of(context).showSnackBar(
@@ -139,12 +140,15 @@ class _MyHomePageState extends State<MyHomePage> {
       onSubmitted: submitCol,
     );
     displayedHexField = hexField;
+    timer = Timer.periodic(
+        Duration(milliseconds: 1000), (Timer t) => broadcastCol(color));
   }
 
   @override
   void dispose() {
     super.dispose();
     colorController.dispose();
+    timer.cancel();
   }
 
   @override
@@ -245,7 +249,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       alpha = (val * 255).round();
                                       color = color.withAlpha(alpha);
                                     });
-                                    broadcastCol(color, context);
                                   },
                                 ),
                               ),
