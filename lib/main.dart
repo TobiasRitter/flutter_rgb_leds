@@ -166,67 +166,30 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 48,
-                                        height: 48,
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 24),
-                                        child: DropdownButton<String>(
-                                          underline: Container(),
-                                          value: dropdownValue,
-                                          onChanged: (val) {
-                                            setState(() {
-                                              dropdownValue = val;
-                                              editing = false;
-                                            });
-                                            if (dropdownValue != "Custom") {
-                                              submitCol(
-                                                  presetsSnapshot
-                                                      .data[dropdownValue],
-                                                  context);
-                                            } else {
-                                              submitCol("FFFFFF", context);
-                                            }
-                                          },
-                                          items: (["Custom"] +
-                                                  presetsSnapshot.data.keys
-                                                      .toList())
-                                              .map(
-                                                (k) => DropdownMenuItem(
-                                                  value: k,
-                                                  child: Center(child: Text(k)),
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ),
-                                      dropdownValue != "Custom" && !editing
-                                          ? IconButton(
-                                              icon: Icon(Icons.edit_outlined),
-                                              onPressed: () => setState(
-                                                  () => editing = true),
-                                            )
-                                          : editing
-                                              ? IconButton(
-                                                  icon: Icon(Icons.done),
-                                                  onPressed: () {
-                                                    setState(
-                                                        () => editing = false);
-                                                    submitCol(
-                                                        colorController.text,
-                                                        context);
-                                                  })
-                                              : Container(
-                                                  width: 48,
-                                                  height: 48,
-                                                ),
-                                    ],
+                                  PresetSelector(
+                                    dropdownValue: dropdownValue,
+                                    editing: editing,
+                                    colorController: colorController,
+                                    presetsSnapshot: presetsSnapshot,
+                                    onEdit: () =>
+                                        setState(() => editing = true),
+                                    onSave: () {
+                                      setState(() => editing = false);
+                                      submitCol(colorController.text, context);
+                                    },
+                                    onChanged: (val) {
+                                      setState(() {
+                                        dropdownValue = val;
+                                        editing = false;
+                                      });
+                                      if (dropdownValue != "Custom") {
+                                        submitCol(
+                                            presetsSnapshot.data[dropdownValue],
+                                            context);
+                                      } else {
+                                        submitCol("FFFFFF", context);
+                                      }
+                                    },
                                   ),
                                   dropdownValue == "Custom" || editing
                                       ? HexField(
@@ -236,37 +199,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                       : Container(),
                                 ],
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 32),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Icon(
-                                        Icons.nights_stay_outlined,
-                                        color: Colors.white60,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Slider(
-                                          value: alpha / 255,
-                                          onChanged: (val) {
-                                            setState(() {
-                                              alpha = (val * 255).round();
-                                              color = color.withAlpha(alpha);
-                                            });
-                                            broadcastCol(color, context);
-                                          }),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Icon(
-                                        Icons.wb_sunny_outlined,
-                                        color: Colors.white60,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              LightSlider(
+                                alpha: alpha,
+                                color: color,
+                                onChanged: (val) {
+                                  setState(() {
+                                    alpha = (val * 255).round();
+                                    color = color.withAlpha(alpha);
+                                  });
+                                  broadcastCol(color, context);
+                                },
                               )
                             ],
                           ),
@@ -278,6 +220,114 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PresetSelector extends StatelessWidget {
+  const PresetSelector({
+    Key key,
+    @required this.dropdownValue,
+    @required this.editing,
+    @required this.colorController,
+    @required this.onChanged,
+    @required this.onEdit,
+    @required this.onSave,
+    @required this.presetsSnapshot,
+  }) : super(key: key);
+
+  final String dropdownValue;
+  final bool editing;
+  final TextEditingController colorController;
+  final Function(String) onChanged;
+  final Function() onEdit;
+  final Function() onSave;
+  final AsyncSnapshot<Map<String, String>> presetsSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 24),
+          child: DropdownButton<String>(
+            underline: Container(),
+            value: dropdownValue,
+            onChanged: onChanged,
+            items: (["Custom"] + presetsSnapshot.data.keys.toList())
+                .map(
+                  (k) => DropdownMenuItem(
+                    value: k,
+                    child: Center(child: Text(k)),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+        dropdownValue != "Custom" && !editing
+            ? IconButton(
+                icon: Icon(Icons.edit_outlined),
+                onPressed: onEdit,
+              )
+            : editing
+                ? IconButton(
+                    icon: Icon(Icons.done),
+                    onPressed: onSave,
+                  )
+                : Container(
+                    width: 48,
+                    height: 48,
+                  ),
+      ],
+    );
+  }
+}
+
+class LightSlider extends StatelessWidget {
+  const LightSlider({
+    Key key,
+    @required this.alpha,
+    @required this.color,
+    @required this.onChanged,
+  }) : super(key: key);
+
+  final int alpha;
+  final Color color;
+  final Function(double) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 32),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Icon(
+              Icons.nights_stay_outlined,
+              color: Colors.white60,
+            ),
+          ),
+          Expanded(
+            child: Slider(
+              value: alpha / 255,
+              onChanged: onChanged,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Icon(
+              Icons.wb_sunny_outlined,
+              color: Colors.white60,
+            ),
+          ),
+        ],
       ),
     );
   }
