@@ -14,6 +14,7 @@ import 'package:string_validator/string_validator.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 const PORT = 15555;
+const BROADCAST_FREQ = 100;
 
 void main() {
   runApp(MyApp());
@@ -62,9 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController colorController = TextEditingController();
   String dropdownValue = "Custom";
   String wifiIP;
-  HexField hexField;
-  Container noHexField = Container();
-  Widget displayedHexField;
   Timer timer;
 
   void broadcastCol(Color color) async {
@@ -135,13 +133,8 @@ class _MyHomePageState extends State<MyHomePage> {
         "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
       },
     );
-    hexField = HexField(
-      colorController: colorController,
-      onSubmitted: submitCol,
-    );
-    displayedHexField = hexField;
-    timer = Timer.periodic(
-        Duration(milliseconds: 1000), (Timer t) => broadcastCol(color));
+    timer = Timer.periodic(Duration(milliseconds: BROADCAST_FREQ),
+        (Timer t) => broadcastCol(color));
   }
 
   @override
@@ -199,14 +192,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                     onEdit: () {
                                       setState(() {
                                         editing = true;
-                                        displayedHexField = hexField;
                                       });
                                       submitCol(lastValidRgb, context);
                                     },
                                     onSave: () {
                                       setState(() {
                                         editing = false;
-                                        displayedHexField = noHexField;
                                       });
                                       submitCol(colorController.text, context);
                                     },
@@ -214,10 +205,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       setState(() {
                                         dropdownValue = val;
                                         editing = dropdownValue == "Custom";
-                                        displayedHexField =
-                                            dropdownValue == "Custom"
-                                                ? hexField
-                                                : noHexField;
                                       });
                                       submitCol(
                                           dropdownValue != "Custom"
@@ -235,7 +222,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                       child: child,
                                       axisAlignment: -1,
                                     ),
-                                    child: displayedHexField,
+                                    child: editing
+                                        ? HexField(
+                                            colorController: colorController,
+                                            onSubmitted: submitCol,
+                                          )
+                                        : Container(),
                                   ),
                                 ],
                               ),
