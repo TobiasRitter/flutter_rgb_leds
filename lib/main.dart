@@ -15,6 +15,7 @@ import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 const PORT = 15555;
 const BROADCAST_FREQ = 10;
+const BROADCAST_DURATION = 1000;
 
 void main() {
   runApp(MyApp());
@@ -64,8 +65,24 @@ class _MyHomePageState extends State<MyHomePage> {
   String dropdownValue = "Custom";
   String wifiIP;
   Timer timer;
+  int lastId = 0;
 
-  void broadcastCol(Color color) async {
+  void broadcastCol() async {
+    lastId++;
+    final id = lastId;
+    if (timer == null || !timer.isActive) {
+      timer = Timer.periodic(const Duration(milliseconds: BROADCAST_FREQ),
+          (timer) => _broadcastCol());
+    }
+
+    Future.delayed(const Duration(milliseconds: BROADCAST_DURATION), () {
+      if (id == lastId) {
+        timer.cancel();
+      }
+    });
+  }
+
+  void _broadcastCol() async {
     try {
       var rgb = [color.alpha, color.red, color.green, color.blue];
       var rgbJson = jsonEncode(rgb);
@@ -112,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Setting $dropdownValue to $rgb");
         });
       }
+      broadcastCol();
     } catch (e) {
       colorController.text = lastValidRgb;
       Scaffold.of(context).showSnackBar(
@@ -133,8 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
         "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
       },
     );
-    timer = Timer.periodic(Duration(milliseconds: BROADCAST_FREQ),
-        (Timer t) => broadcastCol(color));
   }
 
   @override
@@ -241,6 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       alpha = (val * 255).round();
                                       color = color.withAlpha(alpha);
                                     });
+                                    broadcastCol();
                                   },
                                 ),
                               ),
