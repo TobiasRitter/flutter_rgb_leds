@@ -61,7 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController colorController = TextEditingController();
   String dropdownValue = "Custom";
   String wifiIP;
-  double cHeight = 100;
+  HexField hexField;
+  Container noHexField = Container();
+  Widget displayedHexField;
 
   void broadcastCol(Color color, BuildContext context) async {
     try {
@@ -132,6 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
         "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
       },
     );
+    hexField = HexField(
+      colorController: colorController,
+      onSubmitted: submitCol,
+    );
+    displayedHexField = hexField;
   }
 
   @override
@@ -166,11 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SafeArea(
                     child: Column(
                       children: [
-                        AnimatedContainer(
-                          duration: Duration(milliseconds: 1000),
-                          color: Colors.red,
-                          height: cHeight,
-                        ),
                         wifiIP == null
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 48),
@@ -192,14 +194,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                     onEdit: () {
                                       setState(() {
                                         editing = true;
-                                        cHeight = 100;
+                                        displayedHexField = hexField;
                                       });
                                       submitCol(lastValidRgb, context);
                                     },
                                     onSave: () {
                                       setState(() {
                                         editing = false;
-                                        cHeight = 0;
+                                        displayedHexField = noHexField;
                                       });
                                       submitCol(colorController.text, context);
                                     },
@@ -207,8 +209,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                       setState(() {
                                         dropdownValue = val;
                                         editing = dropdownValue == "Custom";
-                                        cHeight =
-                                            dropdownValue == "Custom" ? 100 : 0;
+                                        displayedHexField =
+                                            dropdownValue == "Custom"
+                                                ? hexField
+                                                : noHexField;
                                       });
                                       submitCol(
                                           dropdownValue != "Custom"
@@ -218,16 +222,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                           context);
                                     },
                                   ),
-                                  editing
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 16),
-                                          child: HexField(
-                                            colorController: colorController,
-                                            onSubmitted: submitCol,
-                                          ),
-                                        )
-                                      : Container(),
+                                  AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 500),
+                                    child: displayedHexField,
+                                  ),
                                 ],
                               ),
                               Padding(

@@ -12,29 +12,32 @@ class HexField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            textAlign: TextAlign.center,
-            controller: colorController,
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white60, width: 1),
-                borderRadius: BorderRadius.circular(50),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              textAlign: TextAlign.center,
+              controller: colorController,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white60, width: 1),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 1),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                labelText: "#",
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 1),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              labelText: "#",
+              onSubmitted: (val) {
+                onSubmitted(val, context);
+              },
             ),
-            onSubmitted: (val) {
-              onSubmitted(val, context);
-            },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
