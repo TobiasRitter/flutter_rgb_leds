@@ -98,21 +98,22 @@ class _MyHomePageState extends State<MyHomePage> {
       assert(rgb.length == 6);
       assert(matches(rgb, "[0-9A-F]+"));
       var col = getRgbColor(rgb).withAlpha(alpha);
+      colorController.text = rgb;
       setState(() {
         color = col;
-        colorController.text = rgb;
         lastValidRgb = rgb;
       });
       if (!editing) {
-        var _prefs = await prefs;
-        _prefs.setString(dropdownValue, lastValidRgb);
-        print("Setting $dropdownValue to $lastValidRgb");
+        prefs.then((SharedPreferences _prefs) {
+          _prefs.setString(dropdownValue, rgb);
+          print("Setting $dropdownValue to $rgb");
+        });
       }
       presets = prefs.then(
-        (value) => {
-          "Preset 1": value.getString("Preset 1") ?? "FF0000",
-          "Preset 2": value.getString("Preset 2") ?? "00FF00",
-          "Preset 3": value.getString("Preset 3") ?? "0000FF",
+        (SharedPreferences _prefs) => {
+          "Preset 1": _prefs.getString("Preset 1") ?? "FF0000",
+          "Preset 2": _prefs.getString("Preset 2") ?? "00FF00",
+          "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
         },
       );
       broadcastCol(color, context);
