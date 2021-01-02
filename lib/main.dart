@@ -140,27 +140,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: FutureBuilder<Map<String, String>>(
-            future: presets,
-            builder: (context, presetsSnapshot) {
-              switch (presetsSnapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return const CircularProgressIndicator();
-                default:
-                  return Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          color.withAlpha(
-                              (sqrt(alpha / 255) * 255 * 0.4).round()),
-                          Colors.transparent
-                        ],
-                      ),
+      body: Center(
+        child: FutureBuilder<Map<String, String>>(
+          future: presets,
+          builder: (context, presetsSnapshot) {
+            switch (presetsSnapshot.connectionState) {
+              case ConnectionState.waiting:
+                return const CircularProgressIndicator();
+              default:
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        color
+                            .withAlpha((sqrt(alpha / 255) * 255 * 0.4).round()),
+                        Colors.transparent
+                      ],
                     ),
+                  ),
+                  child: SafeArea(
                     child: Column(
                       children: [
                         wifiIP == null ? WifiWarning() : Container(),
@@ -220,10 +220,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
-                  );
-              }
-            },
-          ),
+                  ),
+                );
+            }
+          },
         ),
       ),
     );
