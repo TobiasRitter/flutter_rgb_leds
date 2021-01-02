@@ -158,33 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     child: Column(
                       children: [
-                        wifiIP == null
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 48),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.wifi_off_outlined),
-                                    Container(
-                                      width: 16,
-                                    ),
-                                    Text("No WiFi connection")
-                                  ],
-                                ),
-                              )
-                            : Container(),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.lightbulb_outline,
-                                size: 128,
-                                color: color.withAlpha(255),
-                              ),
-                            ],
-                          ),
-                        ),
+                        wifiIP == null ? WifiWarning() : Container(),
+                        LightBulb(color: color),
                         Padding(
                           padding: const EdgeInsets.all(48),
                           child: Column(
@@ -303,6 +278,54 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class WifiWarning extends StatelessWidget {
+  const WifiWarning({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 48),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.wifi_off_outlined),
+          Container(
+            width: 16,
+          ),
+          Text("No WiFi connection")
+        ],
+      ),
+    );
+  }
+}
+
+class LightBulb extends StatelessWidget {
+  const LightBulb({
+    Key key,
+    @required this.color,
+  }) : super(key: key);
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.lightbulb_outline,
+            size: 128,
+            color: color.withAlpha(255),
+          ),
+        ],
       ),
     );
   }
