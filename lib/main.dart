@@ -54,7 +54,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   Future<Map<String, String>> presets;
-  bool editing = false;
+  bool editing = true;
   Color color;
   int alpha = 255;
   String lastValidRgb;
