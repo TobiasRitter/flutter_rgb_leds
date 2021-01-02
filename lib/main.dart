@@ -63,11 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String wifiIP;
   double cHeight = 100;
 
-  Color getRgbColor(String rgb) {
-    String colorStr = "0xff" + rgb;
-    return Color(int.parse(colorStr));
-  }
-
   void broadcastCol(Color color, BuildContext context) async {
     try {
       var rgb = [color.alpha, color.red, color.green, color.blue];
@@ -92,12 +87,21 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Color getRgbColor(String rgb) {
+    rgb = rgb.toUpperCase();
+    assert(rgb.length == 6);
+    assert(matches(rgb, "[0-9A-F]+"));
+    String colorStr = "0xff" + rgb;
+    return Color(int.parse(colorStr));
+  }
+
   void submitCol(String rgb, BuildContext context) {
     try {
-      rgb = rgb.toUpperCase();
-      assert(rgb.length == 6);
-      assert(matches(rgb, "[0-9A-F]+"));
       var col = getRgbColor(rgb).withAlpha(alpha);
+      setState(() {
+        color = col;
+        lastValidRgb = rgb;
+      });
       colorController.text = rgb;
       if (!editing) {
         prefs.then((SharedPreferences _prefs) {
@@ -113,10 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       );
       broadcastCol(col, context);
-      setState(() {
-        color = col;
-        lastValidRgb = rgb;
-      });
     } catch (e) {
       colorController.text = lastValidRgb;
       Scaffold.of(context).showSnackBar(
@@ -166,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       children: [
                         AnimatedContainer(
-                          duration: Duration(milliseconds: 2000),
+                          duration: Duration(milliseconds: 1000),
                           color: Colors.red,
                           height: cHeight,
                         ),
