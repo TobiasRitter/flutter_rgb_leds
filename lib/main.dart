@@ -104,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       colorController.text = rgb;
       if (!editing) {
+        presets.then((value) => value[dropdownValue] = rgb);
         prefs.then((SharedPreferences _prefs) {
           _prefs.setString(dropdownValue, rgb);
           print("Setting $dropdownValue to $rgb");
