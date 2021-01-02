@@ -14,7 +14,7 @@ import 'package:string_validator/string_validator.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 const PORT = 15555;
-const BROADCAST_FREQ = 100;
+const BROADCAST_FREQ = 10;
 
 void main() {
   runApp(MyApp());
