@@ -109,13 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Setting $dropdownValue to $rgb");
         });
       }
-      presets = prefs.then(
-        (SharedPreferences _prefs) => {
-          "Preset 1": _prefs.getString("Preset 1") ?? "FF0000",
-          "Preset 2": _prefs.getString("Preset 2") ?? "00FF00",
-          "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
-        },
-      );
       broadcastCol(col, context);
     } catch (e) {
       colorController.text = lastValidRgb;
@@ -131,6 +124,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     submitCol("FFFFFF", context);
+    presets = prefs.then(
+      (SharedPreferences _prefs) => {
+        "Preset 1": _prefs.getString("Preset 1") ?? "FF0000",
+        "Preset 2": _prefs.getString("Preset 2") ?? "00FF00",
+        "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
+      },
+    );
   }
 
   @override
@@ -188,10 +188,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                     editing: editing,
                                     colorController: colorController,
                                     presetsSnapshot: presetsSnapshot,
-                                    onEdit: () => setState(() {
-                                      editing = true;
-                                      cHeight = 100;
-                                    }),
+                                    onEdit: () {
+                                      setState(() {
+                                        editing = true;
+                                        cHeight = 100;
+                                      });
+                                      submitCol(lastValidRgb, context);
+                                    },
                                     onSave: () {
                                       setState(() {
                                         editing = false;
