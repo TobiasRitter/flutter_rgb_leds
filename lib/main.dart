@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController colorController = TextEditingController();
   String dropdownValue = "Custom";
   String wifiIP;
+  double cHeight = 100;
 
   Color getRgbColor(String rgb) {
     String colorStr = "0xff" + rgb;
@@ -102,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         colorController.text = rgb;
         lastValidRgb = rgb;
       });
-      if (dropdownValue != "Custom" && !editing) {
+      if (!editing) {
         var _prefs = await prefs;
         _prefs.setString(dropdownValue, lastValidRgb);
         print("Setting $dropdownValue to $lastValidRgb");
@@ -163,6 +164,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SafeArea(
                     child: Column(
                       children: [
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 2000),
+                          color: Colors.red,
+                          height: cHeight,
+                        ),
                         wifiIP == null
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 48),
@@ -190,18 +196,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                     onChanged: (val) {
                                       setState(() {
                                         dropdownValue = val;
-                                        editing = false;
+                                        editing = dropdownValue == "Custom";
                                       });
-                                      if (dropdownValue != "Custom") {
-                                        submitCol(
-                                            presetsSnapshot.data[dropdownValue],
-                                            context);
-                                      } else {
-                                        submitCol("FFFFFF", context);
-                                      }
+                                      submitCol(
+                                          dropdownValue != "Custom"
+                                              ? presetsSnapshot
+                                                  .data[dropdownValue]
+                                              : "FFFFFF",
+                                          context);
                                     },
                                   ),
-                                  dropdownValue == "Custom" || editing
+                                  editing
                                       ? Padding(
                                           padding:
                                               const EdgeInsets.only(top: 16),
