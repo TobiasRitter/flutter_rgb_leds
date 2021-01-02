@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void submitCol(String rgb, BuildContext context) async {
+  void submitCol(String rgb, BuildContext context) {
     try {
       rgb = rgb.toUpperCase();
       assert(rgb.length == 6);
