@@ -45,20 +45,15 @@ class PresetSelector extends StatelessWidget {
                 .toList(),
           ),
         ),
-        dropdownValue != "Custom" && !editing
+        dropdownValue != "Custom"
             ? IconButton(
-                icon: Icon(Icons.edit_outlined),
-                onPressed: onEdit,
+                icon: Icon(editing ? Icons.done : Icons.edit_outlined),
+                onPressed: editing ? onSave : onEdit,
               )
-            : editing
-                ? IconButton(
-                    icon: Icon(Icons.done),
-                    onPressed: onSave,
-                  )
-                : Container(
-                    width: 48,
-                    height: 48,
-                  ),
+            : Container(
+                width: 48,
+                height: 48,
+              ),
       ],
     );
   }
