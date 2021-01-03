@@ -14,7 +14,7 @@ import 'package:string_validator/string_validator.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 const PORT = 15555;
-const BROADCAST_FREQ = 10;
+const BROADCAST_FREQ = 100;
 const BROADCAST_DURATION = 1000;
 
 void main() {
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       end: Alignment.bottomCenter,
                       colors: [
                         color
-                            .withAlpha((sqrt(alpha / 255) * 255 * 0.4).round()),
+                            .withAlpha((sqrt(alpha / 255) * 255 * 0.6).round()),
                         Colors.transparent
                       ],
                     ),
@@ -188,14 +188,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         wifiIP == null
                             ? Padding(
-                                padding: const EdgeInsets.only(top: 48),
+                                padding: const EdgeInsets.only(top: 64),
                                 child: WifiWarning(),
                               )
                             : Container(),
                         LightBulb(color: color),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 48, vertical: 64),
+                          padding: const EdgeInsets.all(64),
                           child: Column(
                             children: <Widget>[
                               Column(
