@@ -204,12 +204,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SafeArea(
                     child: Column(
                       children: [
-                        wifiIP == null
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 64),
-                                child: WifiWarning(),
-                              )
-                            : Container(),
+                        AnimatedSwitcher(
+                          duration: ANIMATION_DURATION,
+                          transitionBuilder: (child, animation) =>
+                              SizeTransition(
+                            sizeFactor: animation,
+                            child: child,
+                            axisAlignment: 1,
+                          ),
+                          child: wifiIP == null
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 64),
+                                  child: WifiWarning(),
+                                )
+                              : Container(),
+                        ),
                         LightBulb(color: rawColor),
                         Padding(
                           padding: const EdgeInsets.all(64),
@@ -269,13 +278,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: LightSlider(
                                   alpha: alpha,
                                   onChanged: (val) {
-                                    setState(() {
-                                      alpha = val;
-                                    });
+                                    setState(() => alpha = val);
                                     startBroadcast();
                                   },
-                                  onMaxTap: () => setState(() => alpha = 1),
-                                  onMinTap: () => setState(() => alpha = 0),
+                                  onMaxTap: () {
+                                    setState(() => alpha = 1);
+                                    startBroadcast();
+                                  },
+                                  onMinTap: () {
+                                    setState(() => alpha = 0);
+                                    startBroadcast();
+                                  },
                                 ),
                               ),
                             ],
