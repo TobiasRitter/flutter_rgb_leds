@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         lastValidRgb = rgb;
       });
-      colorController.text = rgb;
+      colorController.text = rgb.toUpperCase();
       if (!editing) {
         presets.then((value) => value[dropdownValue] = rgb);
         prefs.then((SharedPreferences _prefs) {
