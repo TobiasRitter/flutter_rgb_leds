@@ -4,14 +4,12 @@ class LightSlider extends StatelessWidget {
   const LightSlider({
     Key key,
     @required this.alpha,
-    @required this.color,
     @required this.onChanged,
     @required this.onMaxTap,
     @required this.onMinTap,
   }) : super(key: key);
 
-  final int alpha;
-  final Color color;
+  final double alpha;
   final Function(double) onChanged;
   final Function() onMaxTap;
   final Function() onMinTap;
@@ -28,7 +26,7 @@ class LightSlider extends StatelessWidget {
         ),
         Expanded(
           child: Slider(
-            value: alpha / 255,
+            value: alpha,
             onChanged: onChanged,
           ),
         ),

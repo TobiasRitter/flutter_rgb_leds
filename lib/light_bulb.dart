@@ -17,7 +17,7 @@ class LightBulb extends StatelessWidget {
           Icon(
             Icons.lightbulb_outline,
             size: 128,
-            color: color.withAlpha(255),
+            color: color,
           ),
         ],
       ),

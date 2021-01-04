@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -60,8 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   Future<Map<String, String>> presets;
   bool editing = true;
-  Color color;
-  int alpha = 255;
+  Color rawColor;
+  double alpha = 1;
   String lastValidRgb;
   TextEditingController colorController = TextEditingController();
   String dropdownValue = "Custom";
@@ -86,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void broadcastCol() async {
     try {
-      var rgb = [color.alpha, color.red, color.green, color.blue];
+      var rgb = [adjustedColor.red, adjustedColor.green, adjustedColor.blue];
       var rgbJson = jsonEncode(rgb);
       assert(wifiIP != null);
       var ipSegments = wifiIP.split(".");
@@ -107,6 +106,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Color get adjustedColor => Color.fromARGB(
+        255,
+        (rawColor.red * alpha).round(),
+        (rawColor.green * alpha).round(),
+        (rawColor.blue * alpha).round(),
+      );
+
   Color getRgbColor(String rgb) {
     rgb = rgb.toUpperCase();
     assert(rgb.length == 6);
@@ -117,9 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void submitCol(String rgb, BuildContext context) {
     try {
-      var col = getRgbColor(rgb).withAlpha(alpha);
+      rawColor = getRgbColor(rgb);
       setState(() {
-        color = col;
         lastValidRgb = rgb;
       });
       colorController.text = rgb;
@@ -191,8 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        color
-                            .withAlpha((sqrt(alpha / 255) * 255 * 0.6).round()),
+                        adjustedColor.withAlpha(150),
                         Colors.transparent
                       ],
                     ),
@@ -206,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: WifiWarning(),
                               )
                             : Container(),
-                        LightBulb(color: color),
+                        LightBulb(color: rawColor),
                         Padding(
                           padding: const EdgeInsets.all(64),
                           child: Column(
@@ -264,15 +268,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 padding: const EdgeInsets.only(top: 32),
                                 child: LightSlider(
                                   alpha: alpha,
-                                  color: color,
                                   onChanged: (val) {
                                     setState(() {
-                                      alpha = (val * 255).round();
-                                      color = color.withAlpha(alpha);
+                                      alpha = val;
                                     });
                                     startBroadcast();
                                   },
-                                  onMaxTap: () => setState(() => alpha = 255),
+                                  onMaxTap: () => setState(() => alpha = 1),
                                   onMinTap: () => setState(() => alpha = 0),
                                 ),
                               ),
