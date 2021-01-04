@@ -68,11 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer timer;
   int lastId = 0;
 
-  void broadcastCol() async {
+  void startBroadcast() async {
     lastId++;
     final id = lastId;
     if (timer == null || !timer.isActive) {
-      timer = Timer.periodic(BROADCAST_FREQ, (timer) => _broadcastCol());
+      timer = Timer.periodic(BROADCAST_FREQ, (timer) => broadcastCol());
     }
 
     Future.delayed(BROADCAST_DURATION, () {
@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _broadcastCol() async {
+  void broadcastCol() async {
     try {
       var rgb = [color.alpha, color.red, color.green, color.blue];
       var rgbJson = jsonEncode(rgb);
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Setting $dropdownValue to $rgb");
         });
       }
-      broadcastCol();
+      startBroadcast();
     } catch (e) {
       colorController.text = lastValidRgb;
       Scaffold.of(context).showSnackBar(
@@ -256,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       alpha = (val * 255).round();
                                       color = color.withAlpha(alpha);
                                     });
-                                    broadcastCol();
+                                    startBroadcast();
                                   },
                                 ),
                               ),
