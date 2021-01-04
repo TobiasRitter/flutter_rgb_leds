@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rgb_leds/main.dart';
 
-class LightSlider extends StatelessWidget {
+class LightSlider extends StatefulWidget {
   const LightSlider({
     Key key,
     @required this.alpha,
     @required this.onChanged,
-    @required this.onMaxTap,
-    @required this.onMinTap,
   }) : super(key: key);
 
   final double alpha;
   final Function(double) onChanged;
-  final Function() onMaxTap;
-  final Function() onMinTap;
+
+  @override
+  _LightSliderState createState() => _LightSliderState();
+}
+
+class _LightSliderState extends State<LightSlider>
+    with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      value: widget.alpha,
+      duration: ANIMATION_DURATION,
+      vsync: this,
+    );
+    animationController
+        .addListener(() => widget.onChanged(animationController.value));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +45,22 @@ class LightSlider extends StatelessWidget {
           icon: Icon(
             Icons.nights_stay_outlined,
           ),
-          onPressed: onMinTap,
+          onPressed: () => animationController.animateTo(0),
         ),
         Expanded(
-          child: Slider(
-            value: alpha,
-            onChanged: onChanged,
+          child: AnimatedBuilder(
+            animation: animationController,
+            builder: (_, __) => Slider(
+              value: animationController.value,
+              onChanged: (val) => animationController.value = val,
+            ),
           ),
         ),
         IconButton(
           icon: Icon(
             Icons.wb_sunny_outlined,
           ),
-          onPressed: onMaxTap,
+          onPressed: () => animationController.animateTo(1),
         ),
       ],
     );

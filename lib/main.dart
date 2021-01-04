@@ -281,14 +281,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() => alpha = val);
                                     startBroadcast();
                                   },
-                                  onMaxTap: () {
-                                    setState(() => alpha = 1);
-                                    startBroadcast();
-                                  },
-                                  onMinTap: () {
-                                    setState(() => alpha = 0);
-                                    startBroadcast();
-                                  },
                                 ),
                               ),
                             ],
