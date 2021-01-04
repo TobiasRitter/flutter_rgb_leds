@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rgb_leds/hex_field.dart';
 import 'package:flutter_rgb_leds/light_bulb.dart';
@@ -67,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String wifiIP;
   Timer timer;
   int lastId = 0;
+  StreamSubscription<ConnectivityResult> subscription;
 
   void startBroadcast() async {
     lastId++;
@@ -86,7 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       var rgb = [color.alpha, color.red, color.green, color.blue];
       var rgbJson = jsonEncode(rgb);
-      wifiIP = await WifiInfo().getWifiIP();
       assert(wifiIP != null);
       var ipSegments = wifiIP.split(".");
       var destinationStr =
@@ -140,6 +141,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void updateWifiState(ConnectivityResult result) {
+    switch (result) {
+      case ConnectivityResult.wifi:
+        WifiInfo().getWifiIP().then((value) => setState(() => wifiIP = value));
+        break;
+      default:
+        setState(() => wifiIP = null);
+        break;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -151,6 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "Preset 3": _prefs.getString("Preset 3") ?? "0000FF",
       },
     );
+    subscription = Connectivity().onConnectivityChanged.listen(updateWifiState);
   }
 
   @override
@@ -158,6 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
     colorController.dispose();
     timer.cancel();
+    subscription.cancel();
   }
 
   @override
