@@ -27,8 +27,6 @@ class _LightSliderState extends State<LightSlider>
       duration: ANIMATION_DURATION,
       vsync: this,
     );
-    animationController
-        .addListener(() => widget.onChanged(animationController.value));
   }
 
   @override
@@ -45,14 +43,20 @@ class _LightSliderState extends State<LightSlider>
           icon: Icon(
             Icons.nights_stay_outlined,
           ),
-          onPressed: () => animationController.animateTo(0),
+          onPressed: () {
+            widget.onChanged(0);
+            animationController.animateTo(0);
+          },
         ),
         Expanded(
           child: AnimatedBuilder(
             animation: animationController,
             builder: (_, __) => Slider(
               value: animationController.value,
-              onChanged: (val) => animationController.value = val,
+              onChanged: (val) {
+                widget.onChanged(val);
+                animationController.value = val;
+              },
             ),
           ),
         ),
@@ -60,7 +64,10 @@ class _LightSliderState extends State<LightSlider>
           icon: Icon(
             Icons.wb_sunny_outlined,
           ),
-          onPressed: () => animationController.animateTo(1),
+          onPressed: () {
+            widget.onChanged(1);
+            animationController.animateTo(1);
+          },
         ),
       ],
     );
