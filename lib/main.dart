@@ -14,8 +14,9 @@ import 'package:string_validator/string_validator.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
 const PORT = 15555;
-const BROADCAST_FREQ = 100;
-const BROADCAST_DURATION = 1000;
+const BROADCAST_FREQ = Duration(milliseconds: 100);
+const BROADCAST_DURATION = Duration(milliseconds: 1000);
+const ANIMATION_DURATION = Duration(milliseconds: 200);
 
 void main() {
   runApp(MyApp());
@@ -71,11 +72,10 @@ class _MyHomePageState extends State<MyHomePage> {
     lastId++;
     final id = lastId;
     if (timer == null || !timer.isActive) {
-      timer = Timer.periodic(const Duration(milliseconds: BROADCAST_FREQ),
-          (timer) => _broadcastCol());
+      timer = Timer.periodic(BROADCAST_FREQ, (timer) => _broadcastCol());
     }
 
-    Future.delayed(const Duration(milliseconds: BROADCAST_DURATION), () {
+    Future.delayed(BROADCAST_DURATION, () {
       if (id == lastId) {
         timer.cancel();
       }
@@ -230,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   ),
                                   AnimatedSwitcher(
-                                    duration: Duration(milliseconds: 200),
+                                    duration: ANIMATION_DURATION,
                                     transitionBuilder: (child, animation) =>
                                         SizeTransition(
                                       sizeFactor: animation,

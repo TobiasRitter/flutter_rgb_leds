@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
 class PresetSelector extends StatelessWidget {
   const PresetSelector({
@@ -45,15 +46,28 @@ class PresetSelector extends StatelessWidget {
                 .toList(),
           ),
         ),
-        dropdownValue != "Custom"
-            ? IconButton(
-                icon: Icon(editing ? Icons.done : Icons.edit_outlined),
-                onPressed: editing ? onSave : onEdit,
-              )
-            : Container(
-                width: 48,
-                height: 48,
-              ),
+        AnimatedSwitcher(
+          duration: ANIMATION_DURATION,
+          child: dropdownValue != "Custom"
+              ? AnimatedSwitcher(
+                  duration: ANIMATION_DURATION,
+                  child: editing
+                      ? IconButton(
+                          key: ValueKey("saveButton"),
+                          icon: Icon(Icons.done),
+                          onPressed: onSave,
+                        )
+                      : IconButton(
+                          key: ValueKey("editButton"),
+                          icon: Icon(Icons.edit_outlined),
+                          onPressed: onEdit,
+                        ),
+                )
+              : Container(
+                  width: 48,
+                  height: 48,
+                ),
+        ),
       ],
     );
   }
