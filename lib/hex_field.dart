@@ -22,7 +22,7 @@ class HexField extends StatelessWidget {
               controller: colorController,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white60, width: 1),
+                  borderSide: BorderSide(color: Colors.white38, width: 1),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 focusedBorder: OutlineInputBorder(

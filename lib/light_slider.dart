@@ -6,22 +6,25 @@ class LightSlider extends StatelessWidget {
     @required this.alpha,
     @required this.color,
     @required this.onChanged,
+    @required this.onMaxTap,
+    @required this.onMinTap,
   }) : super(key: key);
 
   final int alpha;
   final Color color;
   final Function(double) onChanged;
+  final Function() onMaxTap;
+  final Function() onMinTap;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Icon(
+        IconButton(
+          icon: Icon(
             Icons.nights_stay_outlined,
-            color: Colors.white60,
           ),
+          onPressed: onMinTap,
         ),
         Expanded(
           child: Slider(
@@ -29,12 +32,11 @@ class LightSlider extends StatelessWidget {
             onChanged: onChanged,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Icon(
+        IconButton(
+          icon: Icon(
             Icons.wb_sunny_outlined,
-            color: Colors.white60,
           ),
+          onPressed: onMaxTap,
         ),
       ],
     );
