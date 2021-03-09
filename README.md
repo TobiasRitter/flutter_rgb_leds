@@ -5,9 +5,9 @@ This [Flutter](https://flutter.dev/) project is a frontend application for contr
 ## User interface
 
 + To make it easier to switch between favorite colors, the app offers 3 color presets. These color presets can be edited at any time by pressing on the edit button: 
-![Choose color preset](Presets.png)
-![Edit color preset](Editing.png)
+![Choose color preset](Presets.png | width=100)
+![Edit color preset](Editing.png | width=100)
 + The brightness of the selected color can be adjusted by using the slider at the bottom of the screen. By tapping on the icons on either side of the slider, the brightness can be instantly set to 100% or 0%:
-![Adjust color brightness](RedDimmed.png)
+![Adjust color brightness](RedDimmed.png | width=100)
 + If the device is not connected to a WiFi network, a corresponding notification is shown at the top of the screen:
-![No WiFi connection](NoWifi.png)
+![No WiFi connection](NoWifi.png | width=100)
