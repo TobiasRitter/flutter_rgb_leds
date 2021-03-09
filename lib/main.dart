@@ -32,9 +32,14 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.white,
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
-        cursorColor: Colors.white,
-        textSelectionColor: Colors.white38,
-        textSelectionHandleColor: Colors.white,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.white,
+          selectionColor: Colors.white38,
+          selectionHandleColor: Colors.white,
+        ),
+        // cursorColor: Colors.white,
+        // textSelectionColor: Colors.white38,
+        // textSelectionHandleColor: Colors.white,
         sliderTheme: SliderThemeData(
           thumbColor: Colors.white,
           activeTrackColor: Colors.white,
@@ -138,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
       startBroadcast();
     } catch (e) {
       colorController.text = lastValidRgb;
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Invalid color code"),
         ),
